@@ -1,0 +1,2 @@
+include ':app', ':kaldi-android-5.2', ':kaldi', ':models'
+rootProject.name='FYP_ANDROID'
