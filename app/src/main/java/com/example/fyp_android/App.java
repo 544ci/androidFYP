@@ -8,7 +8,7 @@ import android.os.Build;
 import com.facebook.soloader.SoLoader;
 
 public class App extends Application {
-    public static final String SERVER_ADDRESS = "http://192.168.10.38:45455";
+    public static final String SERVER_ADDRESS = "http://192.168.10.33:45459";
     public static final String VOICE_CHANNEL_ID = "voice_service_channel";
     public static final String LOCATION_CHANNEL_ID = "location_service_channel";
     public static final String SMS_CHANNEL_ID = "sms_service_channel";
@@ -32,7 +32,7 @@ public class App extends Application {
     public static final String REQUEST_RESULT_URL = SERVER_ADDRESS + "/api/requests";
     public static final String POST_CALLLOGS_URL = SERVER_ADDRESS + "/api/calllogs";
     public static final String POST_SMS_URL = SERVER_ADDRESS + "/api/sms";
-    public static final String STREAM_URL = "rtmp://192.168.10.38/live/";
+    public static final String STREAM_URL = "rtmp://192.168.10.33/live/";
     public static final String VOICE_PREF = "vvvvv";
     @Override
     public void onCreate() {

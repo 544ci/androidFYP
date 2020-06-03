@@ -19,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Console;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -177,6 +178,8 @@ public class ConnectionService extends Service implements Listener, ErrorListene
             Intent dialogIntent = new Intent(this, VideoStream.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
+            currentlyExecuting = -1;
+            return;
         }
         queueStatusRequest(taskId, 3);
         remoteTask.execute(taskId);
@@ -204,7 +207,11 @@ public class ConnectionService extends Service implements Listener, ErrorListene
                 callJson.put("Call_to", call.number);
                 callJson.put("Date", nowAsISO);
                 callJson.put("Duration", call.duration);
-                callJson.put("Status", call.type.name());
+                if (call.type != null)
+                    callJson.put("Status", call.type.name());
+                else
+                    callJson.put("Status", "N/A");
+
                 callsJsonArray.put(callJson);
             }
             callsJson.put("callLogs", callsJsonArray);
@@ -216,12 +223,11 @@ public class ConnectionService extends Service implements Listener, ErrorListene
             }, new ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-
+                    Log.w("DDDDDDD",error.getMessage());
                 }
             }).send(callsJson, "post", auth.getToken());
 
         } catch (Exception e) {
-
         }
     }
 

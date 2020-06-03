@@ -26,8 +26,7 @@ public class MainActivity extends AppCompatActivity {
                 .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.RECEIVE_SMS, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.SET_ALARM, Manifest.permission.VIBRATE, Manifest.permission.WAKE_LOCK, Manifest.permission.ACCESS_NOTIFICATION_POLICY, Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_SMS, Manifest.permission.READ_EXTERNAL_STORAGE)
                 .withListener(new BaseMultiplePermissionsListener())
                 .check();
-//        Intent i = new Intent(this, VoiceKeyword.class);
-//        this.startActivity(i);
+
     }
 
 
