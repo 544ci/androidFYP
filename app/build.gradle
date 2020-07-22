@@ -66,5 +66,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.github.NodeMedia:NodeMediaClient-Android:2.6.3'
     implementation project(path: ':kaldi')
+    implementation 'androidx.biometric:biometric:1.0.1'
+
 
 }

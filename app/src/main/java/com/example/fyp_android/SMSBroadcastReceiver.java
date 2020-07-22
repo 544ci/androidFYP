@@ -70,13 +70,9 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
         boolean vibration = sharedPreferences.getBoolean("SMSAlarmVibration", true);
 
 
-        alarm = new Alarm(context, RingtoneUri, volume, flash, vibration);
-        alarm.start();
-
         Intent intent = new Intent(context, AlarmScreen.class);
+        intent.putExtra("ringtone",RingtoneUri.toString()).putExtra("volume",volume).putExtra("flash",flash).putExtra("vibration",vibration);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-
         context.startActivity(intent);
     }
 }

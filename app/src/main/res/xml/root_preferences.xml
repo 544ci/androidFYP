@@ -18,15 +18,21 @@
 
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="SMS Alarm">
+    <PreferenceCategory app:title="SMS Alarm"
+        app:iconSpaceReserved="false"
+        >
         <SwitchPreference
             app:key="SMSAlarmService"
             app:title="SMS Alarm"
+            app:iconSpaceReserved="false"
+
             />
 
         <EditTextPreference
             app:title="SMS Keyword"
-            android:key="smskeyword" />
+            android:key="smskeyword"
+            app:iconSpaceReserved="false"
+            />
 
         <RingtonePreference
             android:dialogTitle="Select ringtone"
@@ -38,28 +44,41 @@
             android:summary="Select a nice ringtone"
             android:title="Ringtone"
             app:pref_showAdd="true"
+            app:iconSpaceReserved="false"
+
             app:pref_summaryHasRingtone="%s" />
         <SeekBarPreference
             app:key="SMSAlarmVolume"
             app:title="Alarm Volume"
-         />
+            app:iconSpaceReserved="false"
+
+            />
         <com.takisoft.preferencex.SwitchPreferenceCompat
             app:key="SMSAlarmVibration"
             app:title="Vibration"
             app:summary="Use vibration with alarm"
+            app:iconSpaceReserved="false"
+
             />
         <com.takisoft.preferencex.SwitchPreferenceCompat
             app:key="SMSAlarmFlash"
             app:title="Flash"
             app:summary="Use camera flash with alarm"
+            app:iconSpaceReserved="false"
+
             />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Voice Alarm">
+    <PreferenceCategory app:title="Voice Alarm"
+        app:iconSpaceReserved="false"
+        >
 
         <SwitchPreference
             app:key="VoiceAlarmService"
             app:title="Voice Alarm"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+
             />
 
 
@@ -68,6 +87,8 @@
             app:title="Voice Keyword"
             android:key="voicekeyword"
             app:key="voicekeyword"
+            app:iconSpaceReserved="false"
+
             >
             <intent
                 android:action="android.intent.action.VIEW"
@@ -86,22 +107,46 @@
             android:title="Ringtone"
             app:pref_showAdd="true"
             app:pref_summaryHasRingtone="%s"
+            app:iconSpaceReserved="false"
+
             />
 
         <SeekBarPreference
             app:key="VoiceAlarmVolume"
             app:title="Alarm Volume"
+            app:iconSpaceReserved="false"
+
             />
         <com.takisoft.preferencex.SwitchPreferenceCompat
             app:key="VoiceAlarmVibration"
             app:title="Vibration"
             app:summary="Use vibration with alarm"
+            app:iconSpaceReserved="false"
+
             />
         <com.takisoft.preferencex.SwitchPreferenceCompat
             app:key="VoiceAlarmFlash"
             app:title="Flash"
             app:summary="Use camera flash with alarm"
+            app:iconSpaceReserved="false"
+
             />
     </PreferenceCategory>
+    <PreferenceCategory app:title="Credentials"
+        app:iconSpaceReserved="false"
+        >
+        <Preference
+            app:title="Credentials"
+            android:key="email"
+            app:iconSpaceReserved="false"
+            >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetPackage="com.example.fyp_android"
+                android:targetClass="com.example.fyp_android.LoginActivity"
+                />
+        </Preference>
+    </PreferenceCategory >
+
 
 </PreferenceScreen>

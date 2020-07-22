@@ -82,7 +82,20 @@ public class VoiceKeyword extends AppCompatActivity implements RecognitionListen
         }
 
     }
+    @Override
+    public void onStop() {
+        super.onStop();
+        recognizer.stop();
+        recognizer.shutdown();
 
+
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        recognizer.stop();
+        recognizer.shutdown();
+    }
     @Override
     public void onPartialResult(String s) {
 
@@ -95,6 +108,7 @@ public class VoiceKeyword extends AppCompatActivity implements RecognitionListen
         try {
             json = new JSONObject(s);
             String parsedText = json.getString("text");
+            Log.d("com.example.word",parsedText);
             if(!parsedText.equals("")){
                 keyword.setText(parsedText);
                 keywordText = parsedText;
@@ -119,10 +133,14 @@ public class VoiceKeyword extends AppCompatActivity implements RecognitionListen
         editor.putString("VoiceKeyword",keywordText);
         editor.commit();
         Log.d("!!here",sharedPreferences.getString("VoiceKeyword","no keyword"));
+        recognizer.stop();
+        recognizer.shutdown();
         this.finish();
     }
 
     public void cancel(View view) {
+        recognizer.stop();
+        recognizer.shutdown();
         this.finish();
     }
 

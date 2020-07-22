@@ -50,10 +50,12 @@ public class VoiceService extends Service implements RecognitionListener {
     private SpeechRecognizer recognizer;
     NotificationCompat.Builder builder;
     public static Alarm alarm;
-
+    private boolean serviceRunning;
     @Override
     public void onCreate() {
         super.onCreate();
+        serviceRunning=false;
+
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
          builder = new NotificationCompat.Builder(this, VOICE_CHANNEL_ID)
@@ -66,12 +68,17 @@ public class VoiceService extends Service implements RecognitionListener {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals(App.STOP_VOICE_SERVICE)) {
+            recognizer.stop();
+            recognizer.shutdown();
             stopForeground(true);
             stopSelf();
             return START_NOT_STICKY;
         } else {
-            startForeground(4, builder.build());
-            startRecognition();
+            if(!serviceRunning) {
+                serviceRunning=true;
+                startForeground(4, builder.build());
+                startRecognition();
+            }
             return START_NOT_STICKY;
         }
 
@@ -161,8 +168,8 @@ public class VoiceService extends Service implements RecognitionListener {
     }
 
     private void setReady() {
-        //builder.setContentText("listening");
-        //startForeground(4, builder.build());
+        builder.setContentText("listening");
+        startForeground(4, builder.build());
         try {
             recognizer = new SpeechRecognizer(model);
             recognizer.addListener(this);

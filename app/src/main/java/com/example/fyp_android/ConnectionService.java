@@ -40,16 +40,18 @@ public class ConnectionService extends Service implements Listener, ErrorListene
     private Auth auth;
     private ArrayList<JSONObject> requestStatusQueue;
     private RemoteTask remoteTask;
-    private int currentlyExecuting = -1;
-
+    private Timer timer;
+    private boolean serviceRunning;
     @Override
     public void onCreate() {
         super.onCreate();
+        timer = new Timer();
         requestStatusQueue = new ArrayList<>();
+        serviceRunning=false;
+
     }
 
     public void getCommands() {
-        Timer timer = new Timer();
         auth = new Auth(this);
         Connection connection = new Connection(this, App.GET_COMMANDS_URL + '/' + new Auth(this).getPhoneId(), this, this);
         remoteTask = new RemoteTask(this, this);
@@ -85,14 +87,12 @@ public class ConnectionService extends Service implements Listener, ErrorListene
                 @Override
                 public void onResponse(Object response) {
                     Log.d("com.example.asdf", "Completed request update completed");
-                    currentlyExecuting = -1;
 
                 }
             }, new ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("com.example.asdf", "Completed request update failed");
-                    currentlyExecuting = -1;
 
                 }
             });
@@ -105,20 +105,24 @@ public class ConnectionService extends Service implements Listener, ErrorListene
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals(STOP_CONNECTIVITY_SERVICE)) {
             stopForeground(true);
+            timer.cancel();
             stopSelf();
             return START_NOT_STICKY;
         } else {
-            Intent notificationIntent = new Intent(this, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-            Notification notification = new NotificationCompat.Builder(this, CONNECTION_CHANNEL_ID)
-                    .setContentTitle("Connectivity Service")
-                    .setContentText("Running")
-                    .setSmallIcon(R.drawable.ic_connected)
-                    .setContentIntent(pendingIntent)
-                    .build();
+            if(!serviceRunning){
+                serviceRunning=true;
+                Intent notificationIntent = new Intent(this, MainActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+                Notification notification = new NotificationCompat.Builder(this, CONNECTION_CHANNEL_ID)
+                        .setContentTitle("Connectivity Service")
+                        .setContentText("Running")
+                        .setSmallIcon(R.drawable.ic_connected)
+                        .setContentIntent(pendingIntent)
+                        .build();
 
-            startForeground(2, notification);
-            getCommands();
+                startForeground(2, notification);
+                getCommands();
+            }
             return START_NOT_STICKY;
         }
 
@@ -126,6 +130,10 @@ public class ConnectionService extends Service implements Listener, ErrorListene
 
     @Override
     public void onErrorResponse(VolleyError error) {
+        if(error.networkResponse == null)
+            return;
+        if(error.networkResponse.statusCode==410)
+                auth.logout();
         Log.d("com.example.asdf", "onError: ");
     }
 
@@ -160,12 +168,7 @@ public class ConnectionService extends Service implements Listener, ErrorListene
 
 
     private void executeTask(int taskId) {
-        Log.i("com.example.asdf","Executing Task: "+taskId);
-        if (taskId == currentlyExecuting)
-            return;
-        currentlyExecuting = taskId;
-
-        Log.d("com.example.asdf", "Executing task " + taskId);
+        Log.i("com.example.asdf","Executing Task: "+taskId);;
         if (taskId == 5) {
             uploadCallLogs();
             return;
@@ -177,8 +180,8 @@ public class ConnectionService extends Service implements Listener, ErrorListene
         if(taskId == 6){
             Intent dialogIntent = new Intent(this, VideoStream.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
             startActivity(dialogIntent);
-            currentlyExecuting = -1;
             return;
         }
         queueStatusRequest(taskId, 3);

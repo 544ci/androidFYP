@@ -32,14 +32,14 @@ public class LocationService extends Service implements OnLocationUpdatedListene
     Location location;
     Auth auth;
     private String phoneId;
-
+    private boolean serviceRunning;
     @Override
     public void onCreate() {
         super.onCreate();
         queue = Volley.newRequestQueue(this);
-
-
         phoneId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        serviceRunning=false;
+
     }
 
     public void startCollectingLocation() {
@@ -89,30 +89,29 @@ public class LocationService extends Service implements OnLocationUpdatedListene
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals(STOP_LOCATION_SERVICE)) {
             stopForeground(true);
+            SmartLocation.with(this).location().stop();
             stopSelf();
             return START_NOT_STICKY;
         } else {
-            Intent notificationIntent = new Intent(this, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-            Notification notification = new NotificationCompat.Builder(this, LOCATION_CHANNEL_ID)
-                    .setContentTitle("Location Service")
-                    .setContentText("Running")
-                    .setSmallIcon(R.drawable.ic_connected)
-                    .setContentIntent(pendingIntent)
-                    .build();
-            startForeground(3, notification);
-            startCollectingLocation();
-            auth = new Auth(this, this);
+            if(!serviceRunning) {
+                serviceRunning = true;
+                Intent notificationIntent = new Intent(this, MainActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+                Notification notification = new NotificationCompat.Builder(this, LOCATION_CHANNEL_ID)
+                        .setContentTitle("Location Service")
+                        .setContentText("Running")
+                        .setSmallIcon(R.drawable.ic_connected)
+                        .setContentIntent(pendingIntent)
+                        .build();
+                startForeground(3, notification);
+                startCollectingLocation();
+                auth = new Auth(this, this);
+            }
             return START_NOT_STICKY;
         }
 
     }
 
-
-    public void stopService() {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        stopService(notificationIntent);
-    }
 
     @Nullable
     @Override

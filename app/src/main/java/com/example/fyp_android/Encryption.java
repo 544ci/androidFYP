@@ -1,7 +1,12 @@
 package com.example.fyp_android;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.security.KeyChain;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
 import android.util.Log;
 
 import com.facebook.android.crypto.keychain.AndroidConceal;
@@ -21,28 +26,49 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class Encryption {
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+
+public class Encryption{
     private Context context;
     private EncryptionListener listener;
-    private String password;
     private Crypto crypto;
     private ExecutorService executorService;
     private int threadCount;
     private String[] fileTypesToEncrypt;
-
-    Encryption(Context context, EncryptionListener listener, String password, String[] fileTypesToEncrypt, int threadCount) {
+    private static final String ALIAS= "encrypt";
+    private SharedPreferences.Editor editor;
+    private SharedPreferences sp;
+    Encryption(Context context, EncryptionListener listener,String encryptionKey, String[] fileTypesToEncrypt, int threadCount) {
         this.context = context;
         this.listener = listener;
         executorService = Executors.newFixedThreadPool(threadCount);
-        this.password = password;
         this.threadCount = threadCount;
-        ConstKeyChain pgkc = new ConstKeyChain(password.getBytes(), CryptoConfig.KEY_256);
+        sp = PreferenceManager.getDefaultSharedPreferences(context);
+        editor = sp.edit();
+        ConstKeyChain pgkc;
+        pgkc = new ConstKeyChain(encryptionKey.getBytes(StandardCharsets.UTF_8), CryptoConfig.KEY_256);
         crypto = AndroidConceal.get().createDefaultCrypto(pgkc);
         this.fileTypesToEncrypt = fileTypesToEncrypt;
     }
@@ -115,6 +141,9 @@ public class Encryption {
     }
 
 
+    private boolean keyCreated(){
+        return !sp.getString("iv","").equals("");
+    }
     private File createTempFile(File file) throws IOException {
         File tmp = new File(file.getParent() + "/" + UUID.randomUUID().toString() + "." + getFileType(file));
         tmp.createNewFile();
@@ -134,7 +163,6 @@ public class Encryption {
         return crypto.getCipherInputStream(
                 fileStream, new Entity("Password"));
     }
-
 
     private class EncryptFile implements Runnable {
         private File file;

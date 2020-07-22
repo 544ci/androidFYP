@@ -16,7 +16,7 @@ public class AlarmScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_screen);
 
-
+        getSupportActionBar().hide();
         String ringtoneUri = getIntent().getStringExtra("ringtone");
         int volume = getIntent().getIntExtra("volume",10);
         boolean flash = getIntent().getBooleanExtra("flash",true);

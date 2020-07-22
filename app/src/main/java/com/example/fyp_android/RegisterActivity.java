@@ -66,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity implements Listener, Err
     @Override
     public void onResponse(Object response) {
         Toast.makeText(this, "You Have been registered.", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
